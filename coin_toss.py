@@ -24,8 +24,7 @@ def perform_experiment(n):
         tosses = successive_found()
         if len(outcomes) <= tosses:
             diff = tosses - len(outcomes) + 1
-            outcomes = np.append(outcomes, np.zeros(diff))
-
+            outcomes = np.append(outcomes, np.zeros(diff)) 
         outcomes[tosses] += 1   
     return outcomes
 
@@ -39,19 +38,27 @@ def plot_results(outcome):
 def prob_of_x_tosses(outcome, x):
     if x < 2:
         return 0
-    print(outcome[x-2:])
     return sum(outcome[x-2:])
 
+def calc_likelihood(outcomes):
+    def normalize(x):
+        return np.round(x / np.sum(outcomes), 4)
+    return np.apply_along_axis(normalize, 0, outcomes)
+
+
 def main():
-    print("Number of tosses before successive tosses: ")
-    n = 100000
+    np.set_printoptions(suppress=True, precision=4)
+    print("\nNumber of tosses before successive tosses: ", end="\n\t")
+    n = 1000000
     outcomes = perform_experiment(n)
     print(outcomes)
-    likelihood = [round(x / sum(outcomes), 4) for x in outcomes]
+
+    print("\nLikelihood of successive tosses: ", end="\n\t")
+    likelihood = calc_likelihood(outcomes)
     print(likelihood)
 
-    x = 5
-    print("Probability of 4 or more tosses: ")
+    x = 4
+    print(f"\nLikelihood of {x} or more tosses, based on {n} experiments: ")
     print(prob_of_x_tosses(likelihood, x))
 
     plot_results(likelihood)
